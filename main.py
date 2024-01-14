@@ -9,7 +9,7 @@ import csv
 
 # Opening website
 driver = webdriver.Chrome()
-driver.get("https://www.qualitycheck.org/search/?keyword=#accreditationprogram=Home%20Care&deemedprogram_parent=Home%20Health%20Agency,Home%20Infusion%20Therapy,Hospice%20Agency&addoncertification=Community-Based%20Palliative%20Care%20Certification")
+driver.get("https://www.qualitycheck.org/search/?keyword=#accreditationprogram=Home%20Care&deemedprogram_parent=Home%20Health%20Agency,Home%20Infusion%20Therapy,Hospice%20Agency&addoncertification=Community-Based%20Palliative%20Care%20Certification&pg=4")
 driver.implicitly_wait(20)
 time.sleep(5)
 providers_data = []
@@ -21,15 +21,24 @@ for i in range(len(items)):
     items = driver.find_elements(By.CSS_SELECTOR, "div.item.hawk-contentItem")
     parent = items[i].find_element(By.CSS_SELECTOR, "div.parent")
     title = parent.find_element(By.CSS_SELECTOR, "a.svg-ikon-base64-gold-seal").text
-    hco = parent.find_element(By.XPATH, "(//div[@class='hawki'])").text.split('\n')[0].replace('HCO ID: ', '')
-    street = parent.find_element(By.XPATH, "(//div[@class='hawki'])").text.split('\n')[1]
-    city = parent.find_element(By.XPATH, "(//div[@class='hawki'])").text.split('\n')[2].split(', ')[0]
-    state = parent.find_element(By.XPATH, "(//div[@class='hawki'])").text.split('\n')[2].split(', ')[1].split(' ')[0]
-    gip = parent.find_element(By.XPATH, "(//div[@class='hawki'])").text.split('\n')[2].split(', ')[1].split(' ')[1]
+    kk = parent.find_element(By.XPATH, "(//div[@class='hawki'])").text.split('\n')
+    if len(kk) == 3:
+        hco = kk[0].replace('HCO ID: ', '')
+        street = kk[1]
+        city = kk[2].split(', ')[0]
+        state = kk[2].split(', ')[1].split(' ')[0]
+        gip = kk[2].split(', ')[1].split(' ')[1]
+    elif len(kk) == 4:
+        hco = kk[0].replace('HCO ID: ', '')
+        street = kk[2]
+        city = kk[3].split(', ')[0]
+        state = kk[3].split(', ')[1].split(' ')[0]
+        gip = kk[3].split(', ')[1].split(' ')[1]
+        
     time.sleep(4)
     btn = parent.find_element(By.XPATH, f"//a[@id='HawkSearchItems_lvItems_ctrl{i}_ctl00_link_lnkViewReport']")
     driver.execute_script("arguments[0].click();", btn)
-    
+    # time.sleep(4)
     e = driver.find_element(By.XPATH, "//table[@class='x-table x-border x-frilled x-seal x-first-left-mobi']")
     els = e.find_elements(By.CLASS_NAME, "x-row")
     for j in range(len(els)):
@@ -59,7 +68,7 @@ for i in range(len(items)):
     time.sleep(5)
     driver.back()
     # print(data)
-    time.sleep(4)
+    time.sleep(10)
     try:
         items = driver.find_elements(By.CSS_SELECTOR, "div.item.hawk-contentItem")
         child = items[i].find_element(By.CSS_SELECTOR, "div.child")
@@ -79,7 +88,6 @@ for i in range(len(items)):
                 city = key[2].split(',')[0]
                 state = key[2].split(',')[1]
                 gip = key[2].split(',')[2]
-            print(title)
             
             data = {
                 'Title': title,
@@ -99,10 +107,11 @@ for i in range(len(items)):
             providers_data.append(data)
     except (TimeoutException, StaleElementReferenceException) as e:
         # print(f"Exception: {e}")
-        # print(f"Element for page {int(active_page_number) + 1} not found. Exiting the loop.")
-        break
+        print(f"Element for page not found. Exiting the loop.")
+        # break
+        
 
-x = '1'
+x = '3'
 # Specify the CSV file path
 csv_file_path = f'output-{x}.csv'
 

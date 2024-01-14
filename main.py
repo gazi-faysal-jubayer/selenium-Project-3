@@ -21,7 +21,7 @@ for i in range(len(items)):
     items = driver.find_elements(By.CSS_SELECTOR, "div.item.hawk-contentItem")
     parent = items[i].find_element(By.CSS_SELECTOR, "div.parent")
     title = parent.find_element(By.CSS_SELECTOR, "a.svg-ikon-base64-gold-seal").text
-    kk = parent.find_element(By.XPATH, "(//div[@class='hawki'])").text.split('\n')
+    kk = parent.find_element(By.CSS_SELECTOR, "div.hawki").text.split('\n')
     if len(kk) == 3:
         hco = kk[0].replace('HCO ID: ', '')
         street = kk[1]
@@ -75,36 +75,36 @@ for i in range(len(items)):
         childs = child.find_elements(By.CSS_SELECTOR, "div.hawk-childContent")
         print(len(childs))
 
-        for j in range(len(childs)):
-            title = childs[j].find_element(By.CSS_SELECTOR, "h3.title.hawk-contentTitle.hawki").text
-            key = childs[j].find_element(By.CSS_SELECTOR, "div.hawki").text.split('\n')
+        for k in range(len(childs)):
+            Ctitle = childs[k].find_element(By.CSS_SELECTOR, "h3.title.hawk-contentTitle.hawki").text
+            key = childs[k].find_element(By.CSS_SELECTOR, "div.hawki").text.split('\n')
             if len(key) == 2:
-                street = key[0]
-                city = key[1].split(',')[0]
-                state = key[1].split(',')[1]
-                gip = key[1].split(',')[2]
+                Cstreet = key[0]
+                Ccity = key[1].split(',')[0]
+                Cstate = key[1].split(',')[1]
+                Cgip = key[1].split(',')[2]
             elif len(key) == 3:
-                street = key[1]
-                city = key[2].split(',')[0]
-                state = key[2].split(',')[1]
-                gip = key[2].split(',')[2]
+                Cstreet = key[1]
+                Ccity = key[2].split(',')[0]
+                Cstate = key[2].split(',')[1]
+                Cgip = key[2].split(',')[2]
             
-            data = {
-                'Title': title,
+            Cdata = {
+                'Title': Ctitle,
                 'HCO': '',
                 'Subheading': '',
-                'Street': street,
-                'City': city,
-                'State': state,
-                'GIP': gip,
+                'Street': Cstreet,
+                'City': Ccity,
+                'State': Cstate,
+                'GIP': Cgip,
                 'Accreditation': '',
                 'Accreditation Decision': '',
                 'Effective Date': '',
                 'Last Full Survey Date': '',
                 'Last On-Site Survey Date': ''
             }
-            print(data)
-            providers_data.append(data)
+            print(Cdata)
+            providers_data.append(Cdata)
     except (TimeoutException, StaleElementReferenceException) as e:
         # print(f"Exception: {e}")
         print(f"Element for page not found. Exiting the loop.")

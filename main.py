@@ -60,44 +60,47 @@ for i in range(len(items)):
     driver.back()
     # print(data)
     time.sleep(4)
-    
-    items = driver.find_elements(By.CSS_SELECTOR, "div.item.hawk-contentItem")
-    child = items[i].find_element(By.CSS_SELECTOR, "div.child")
-    childs = child.find_elements(By.CSS_SELECTOR, "div.hawk-childContent")
-    print(len(childs))
+    try:
+        items = driver.find_elements(By.CSS_SELECTOR, "div.item.hawk-contentItem")
+        child = items[i].find_element(By.CSS_SELECTOR, "div.child")
+        childs = child.find_elements(By.CSS_SELECTOR, "div.hawk-childContent")
+        print(len(childs))
 
-    for j in range(len(childs)):
-        title = childs[j].find_element(By.CSS_SELECTOR, "h3.title.hawk-contentTitle.hawki").text
-        key = childs[j].find_element(By.CSS_SELECTOR, "div.hawki").text.split('\n')
-        if len(key) == 2:
-            street = key[0]
-            city = key[1].split(',')[0]
-            state = key[1].split(',')[1]
-            gip = key[1].split(',')[2]
-        elif len(key) == 3:
-            street = key[1]
-            city = key[2].split(',')[0]
-            state = key[2].split(',')[1]
-            gip = key[2].split(',')[2]
-        print(title)
-        
-        data = {
-            'Title': title,
-            'HCO': '',
-            'Subheading': '',
-            'Street': street,
-            'City': city,
-            'State': state,
-            'GIP': gip,
-            'Accreditation': '',
-            'Accreditation Decision': '',
-            'Effective Date': '',
-            'Last Full Survey Date': '',
-            'Last On-Site Survey Date': ''
-        }
-        print(data)
-        providers_data.append(data)
-        
+        for j in range(len(childs)):
+            title = childs[j].find_element(By.CSS_SELECTOR, "h3.title.hawk-contentTitle.hawki").text
+            key = childs[j].find_element(By.CSS_SELECTOR, "div.hawki").text.split('\n')
+            if len(key) == 2:
+                street = key[0]
+                city = key[1].split(',')[0]
+                state = key[1].split(',')[1]
+                gip = key[1].split(',')[2]
+            elif len(key) == 3:
+                street = key[1]
+                city = key[2].split(',')[0]
+                state = key[2].split(',')[1]
+                gip = key[2].split(',')[2]
+            print(title)
+            
+            data = {
+                'Title': title,
+                'HCO': '',
+                'Subheading': '',
+                'Street': street,
+                'City': city,
+                'State': state,
+                'GIP': gip,
+                'Accreditation': '',
+                'Accreditation Decision': '',
+                'Effective Date': '',
+                'Last Full Survey Date': '',
+                'Last On-Site Survey Date': ''
+            }
+            print(data)
+            providers_data.append(data)
+    except (TimeoutException, StaleElementReferenceException) as e:
+        # print(f"Exception: {e}")
+        # print(f"Element for page {int(active_page_number) + 1} not found. Exiting the loop.")
+        break
 
 x = '1'
 # Specify the CSV file path
